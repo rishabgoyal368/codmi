@@ -8,13 +8,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable implements JWTSubject
 {
-    const PENDINGSTATUS = 'pending';
-    const ACTIVESTATUS = 'active';
+    const PENDINGSTATUS = '2';
+    const ACTIVESTATUS = '1';
     const USERTYPE = '1';
     const COOKTYPE = '2';
+    const PROFILE_PIC = '/assets/upload/users/';
 
     use HasFactory, Notifiable, SoftDeletes;
 
@@ -32,6 +34,7 @@ class User extends Authenticatable implements JWTSubject
         'status',
         'type',
         'email_verified_at',
+        'login_type'
     ];
 
     /**
@@ -86,7 +89,76 @@ class User extends Authenticatable implements JWTSubject
                 'mobile_number' => @$data['mobile_number'],
                 'status' => @$data['status'],
                 'type' => @$data['type'],
+                'login_type' => $data['login_type']
             ]
         );
+    }
+
+    public function getProfileImage()
+    {
+        $image = $this->profile_pic;
+        if ($image) {
+            return env('APP_URL') . User::PROFILE_PIC . $image;
+        } else {
+            return env('APP_URL') . 'assets/images/faces-clipart/pic-1.png';
+        }
+    }
+
+    public function getUserType()
+    {
+        $user_type = $this->type;
+        switch ($user_type) {
+            case User::COOKTYPE:
+                return array('badge badge-info', 'Cook');
+                break;
+
+            case User::USERTYPE:
+                return array('badge badge-warning', 'User');
+                break;
+
+            default:
+                return array('badge badge-default', '--');
+                break;
+        }
+    }
+
+    public function getStatus()
+    {
+        $status = $this->status;
+        switch ($status) {
+            case User::ACTIVESTATUS:
+                return array('badge badge-success', 'Active');
+                break;
+
+            case User::PENDINGSTATUS:
+                return array('badge badge-danger', 'pending');
+                break;
+
+            default:
+                return array('badge badge-default', '--');
+                break;
+        }
+    }
+
+    public function getLoginType()
+    {
+        $login_type = $this->login_type;
+        switch ($login_type) {
+            case 'email':
+                return array('badge badge-success', 'Email');
+                break;
+
+            case 'facebook':
+                return array('badge badge-info', 'Facebook');
+                break;
+
+            case 'google':
+                return array('badge badge-danger', 'Google');
+                break;
+
+            default:
+                return array('badge badge-default', '--');
+                break;
+        }
     }
 }

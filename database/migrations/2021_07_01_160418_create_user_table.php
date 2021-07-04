@@ -21,6 +21,7 @@ class CreateUserTable extends Migration
             $table->string('profile_pic')->nullable();
             $table->string('mobile_number')->nullable();
             $table->string('status')->nullable();
+            $table->string('login_type');
             $table->string('type');
             $table->string('email_verified_at')->nullable();
             $table->softDeletes();

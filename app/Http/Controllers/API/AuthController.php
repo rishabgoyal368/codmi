@@ -5,16 +5,20 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 
 use JWTAuth;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use stdClass;
+use App\Http\Traits\CommonTrait;
+use App\Models\User;
+use App\Models\OnBoardSubmit;
 
 class AuthController extends Controller
 {
+
+    use CommonTrait;
 
     protected function commonResponse($data)
     {
@@ -31,7 +35,8 @@ class AuthController extends Controller
         $validator = Validator::make($data, [
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6|max:50'
+            'password' => 'required|string|min:6|max:50',
+            'login_type' => 'required|in:email,facebook,google'
         ]);
         if ($validator->fails()) {
             $data['code'] = 404;
@@ -54,8 +59,6 @@ class AuthController extends Controller
     public function userLogin(Request $request)
     {
         $credentials = $request->only('email', 'password');
-
-        //valid credential
         $validator = Validator::make($credentials, [
             'email' => 'required|email',
             'password' => 'required|string|min:6|max:50'
@@ -91,42 +94,45 @@ class AuthController extends Controller
         }
     }
 
-    public function logout(Request $request)
+    public function getOnboadingQuestion()
     {
-        //valid credential
-        $validator = Validator::make($request->only('token'), [
-            'token' => 'required'
-        ]);
-
-        //Send failed response if request is not valid
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
-        }
-
-        //Request is validated, do logout        
-        try {
-            JWTAuth::invalidate($request->token);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User has been logged out'
-            ]);
-        } catch (JWTException $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sorry, user cannot be logged out'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        $question =  $this->onBoardingQuestion();
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['message'] = 'Onboard Question';
+        $data['data'] = $question;
+        return $this->commonResponse($data);
     }
 
-    public function get_user(Request $request)
+    public function submitOnboadingQuestion(Request $request)
     {
-        $this->validate($request, [
-            'token' => 'required'
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'answer' => 'required',
+            'question_id' => 'required',
         ]);
-
-        $user = JWTAuth::authenticate($request->token);
-
-        return response()->json(['user' => $user]);
+        if ($validator->fails()) {
+            $data['code'] = 404;
+            $data['status'] = 'error';
+            $data['message'] = $validator->errors()->first();
+            $data['data'] = new \stdClass();
+            return $this->commonResponse($data);
+        } else {
+            $user = JWTAuth::parseToken()->authenticate();
+            OnBoardSubmit::updateOrcreate(
+                [
+                    'question_id' => $request->question_id,
+                    'user_id' => $user->id
+                ],
+                [
+                    'answer' => $request->answer
+                ]
+            );
+            $data['code'] = 200;
+            $data['status'] = 'success';
+            $data['message'] = 'Onboard Question submit successfully';
+            $data['data'] = new \stdClass();
+            return $this->commonResponse($data);
+        }
     }
 }
