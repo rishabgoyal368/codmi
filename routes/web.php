@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Auth\DashboardController;
+use App\Http\Controllers\Admin\Auth\UserController;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,12 +23,13 @@ Route::match(['get', 'post'], '/admin', [AuthController::class, 'login'])->name(
 
 Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function () {
 	Route::get('/dashboard', [DashboardController::class, 'dashboard']);
-
 	Route::get('/logout', [AuthController::class, 'logout']);
 
 	// profile
 	Route::match(['get', 'post'], '/my-profile', [DashboardController::class, 'profile']);
-	Route::post('/change-password', [ProfileController::class, 'change_password']);
+	// Route::post('/change-password', [ProfileController::class, 'change_password']);
 
-	
+	Route::match(['get', 'post'], '/manage-users', [UserController::class, 'list']);
+	Route::match(['get', 'post'], '/edit-user/{id?}', [UserController::class, 'edit'])->name('edit-user');
+	Route::post('change-request', [UserController::class, 'changeStatus']);
 });

@@ -15,3 +15,11 @@ input.error {
 input.error::placeholder {
     color: #222 !important;
 }
+
+.icon_red {
+    color: red !important;
+}
+
+.custom_icon {
+    font-size: 16px !important;
+}
