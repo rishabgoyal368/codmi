@@ -39,8 +39,12 @@
                                 <td><label class="{{$user->getStatus()[0]}}">{{$user->getStatus()[1 ]}}</label></td>
                                 <td>{{date('d-M-y H:i:s',strtotime($user->created_at))}}</td>
                                 <td>
-                                    <a href="{{url('/admin/edit-user')}}/{{$user->id}}"><i class="mdi mdi-grease-pencil custom_icon"></i></a>
-                                    <a class="changeStatus" data-id="{{$user->id}}" data-url="{{url('/admin/change-request')}}" data-status="{{$user->status}}"><i class="mdi mdi mdi-delete custom_icon icon_red"></i></a>
+                                    <a href="{{url('/admin/edit-user')}}/{{$user->id}}" title="Edit"><i class="mdi mdi-grease-pencil custom_icon"></i></a>
+                                    <a class="changeStatus" data-id="{{$user->id}}" data-url="{{url('/admin/change-request')}}" data-status="{{$user->status}}"><i class="mdi mdi mdi-delete custom_icon icon_red" title="Delete"></i></a>
+                                    @if($user->type == \App\Models\User::COOKTYPE)
+                                    <a href="{{url('/admin/on-board-result')}}/{{$user->id}}" target="_blank"><i class="mdi mdi mdi-database custom_icon" title="On board Result"></i></a>
+                                    @endif
+
                                 </td>
                             </tr>
                             @empty

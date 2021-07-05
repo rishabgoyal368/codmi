@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Auth\DashboardController;
 use App\Http\Controllers\Admin\Auth\UserController;
 use App\Models\User;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,4 +33,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function () {
 	Route::match(['get', 'post'], '/manage-users', [UserController::class, 'list']);
 	Route::match(['get', 'post'], '/edit-user/{id?}', [UserController::class, 'edit'])->name('edit-user');
 	Route::post('change-request', [UserController::class, 'changeStatus']);
+
+	Route::get('/on-board-result/{id}', [UserController::class, 'onBoardResult']);
 });

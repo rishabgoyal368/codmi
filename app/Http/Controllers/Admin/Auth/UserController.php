@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
 use App\Models\User;
+use App\Models\OnBoardSubmit;
 
 class UserController extends Controller
 {
@@ -57,5 +58,11 @@ class UserController extends Controller
             'status' => $status
         ]);
         return response()->json(['message' => 'User Status changed', 'code' => 200]);
+    }
+
+    public function onBoardResult($id)
+    {
+        $results = OnBoardSubmit::where('user_id',$id)->get();
+        return view('admin.users.onBoard', compact('results'));
     }
 }
