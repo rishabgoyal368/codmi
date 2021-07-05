@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
+    const PROFILEPATH = 'assets/upload/users/';
+
     protected $fillable = [
         'name', 'email', 'password', 'profile_pic'
     ];
@@ -15,7 +17,7 @@ class Admin extends Authenticatable
     {
         $image = $this->profile_pic;
         if ($image) {
-            return env('APP_URL') . 'assets/images/faces/face1.jpg';
+            return env('APP_URL') . Admin::PROFILEPATH . $image;
         } else {
             return env('APP_URL') . 'assets/images/faces/face1.jpg';
         }

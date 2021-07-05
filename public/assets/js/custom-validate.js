@@ -56,4 +56,31 @@ $(document).ready(function() {
             form.submit();
         }
     });
+
+
+    $("#admin-user").validate({
+        rules: {
+            email: {
+                required: true,
+                email: true,
+            },
+            name: {
+                required: true,
+                alpha: true,
+                maxlength: 30,
+            },
+        },
+        messages: {
+            password: {
+                required: "Please enter password",
+            },
+            email: {
+                required: "Please enter your email address",
+            },
+        },
+
+        submitHandler: function(form) {
+            form.submit();
+        }
+    });
 });

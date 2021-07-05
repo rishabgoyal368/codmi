@@ -1,4 +1,8 @@
 $(document).ready(function() {
+    // alert hide
+    setTimeout(() => {
+        $('.alert').hide(1000);
+    }, 1000);
 
     $(document).on("click", ".changeStatus", function(e) {
         e.preventDefault();

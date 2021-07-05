@@ -34,7 +34,7 @@ class AuthController extends Controller
                     'password' => $data['password']
                 );
                 if (Auth::guard('admin')->attempt($credentials)) {
-                    $admin = Auth::guard('admin')->user();
+                    $admin = Auth::guard('admin')->user()->name;
                     return redirect('admin/dashboard')->with('success', 'Welcome Back ' . ucfirst($admin));
                 } else {
                     return redirect('admin/login')->with('error', "You have entered wrong email or password");
@@ -49,20 +49,7 @@ class AuthController extends Controller
     {
         Auth::guard('admin')->logout();
         Session::flush();
-        return redirect('admin/login')->with('success', 'You logged out successfully');
-    }
-
-
-    public function check_admin_email()
-    {
-
-        $email = $_GET['email'];
-        $check = Admin::where('email', $email)->count();
-        if ($check > 0) {
-            return 'true';
-        } else {
-            return 'false';
-        }
+        return redirect('admin')->with('success', 'You logged out successfully');
     }
 
     public function forgot_password(Request $request)
