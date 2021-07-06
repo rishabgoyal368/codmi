@@ -21,4 +21,8 @@ Route::post('user-login', [AuthController::class, 'userLogin']);
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('onboarding-question',[AuthController::class,'getOnboadingQuestion']);
     Route::post('submit-onboarding-question',[AuthController::class,'submitOnboadingQuestion']);
+    
+    Route::get('get-profile',[AuthController::class,'getProfile']);
+    Route::post('update-profile',[AuthController::class,'updateProfile']);
+
 });

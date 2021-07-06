@@ -16,7 +16,7 @@ class User extends Authenticatable implements JWTSubject
     const ACTIVESTATUS = '1';
     const USERTYPE = '1';
     const COOKTYPE = '2';
-    const PROFILE_PIC = '/assets/upload/users/';
+    const PROFILE_PIC = 'assets/upload/users/';
 
     use HasFactory, Notifiable, SoftDeletes;
 
@@ -34,7 +34,8 @@ class User extends Authenticatable implements JWTSubject
         'status',
         'type',
         'email_verified_at',
-        'login_type'
+        'login_type',
+        // 'gender'
     ];
 
     /**
@@ -43,7 +44,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password',
+        'password', 'email_verified_at', 'deleted_at', 'created_at', 'updated_at'
     ];
 
     /**

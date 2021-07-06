@@ -135,4 +135,51 @@ class AuthController extends Controller
             return $this->commonResponse($data);
         }
     }
+
+    public function getProfile(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user['profile_pic'] = $user->getProfileImage();
+        $data['code'] = 200;
+        $data['status'] = 'success';
+        $data['message'] = 'User Profile';
+        $data['data'] = $user;
+        return $this->commonResponse($data);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $data = $request->all();
+        $user = JWTAuth::parseToken()->authenticate();
+        $validator = Validator::make($data, [
+            'name' => 'required|max:35',
+            'email' => 'required|email|unique:users,email,' . $user['id'] . ',id,deleted_at,NULL',
+            'profile_pic' => 'nullable|mimes:jpeg,jpg,png|max:10000',
+            'mobile_number' => 'required|numeric',
+            // 'gender' => 'required|in:male,female,others',
+        ]);
+        if ($validator->fails()) {
+            $data['code'] = 404;
+            $data['status'] = 'error';
+            $data['message'] = $validator->errors()->first();
+            $data['data'] = new \stdClass();
+            return $this->commonResponse($data);
+        } else {
+            if ($request->profile_pic) {
+                $profile_pic = $request->profile_pic->getClientOriginalName() . '_' . time() . '.' . $request->profile_pic->extension();
+                $request->profile_pic->move(public_path(User::PROFILE_PIC), $profile_pic);
+                $user->profile_pic = $profile_pic;
+            }
+            $user->name = $data['name'];
+            $user->email = $data['email'];
+            $user->mobile_number = $data['mobile_number'];
+            // $user->gender = $data['gender'];
+            $user->save();
+            $data['code'] = 200;
+            $data['status'] = 'success';
+            $data['message'] = 'Profile updated successfuly';
+            $data['data'] = new \stdClass();
+            return $this->commonResponse($data);
+        }
+    }
 }
