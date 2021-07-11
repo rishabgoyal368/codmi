@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\CookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,6 @@ use App\Http\Controllers\API\AuthController;
 |
 */
 Route::post('user-register', [AuthController::class, 'user_register']);
-
 Route::post('user-login', [AuthController::class, 'userLogin']);
 
 Route::group(['middleware' => ['jwt.verify']], function() {
@@ -24,5 +24,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     
     Route::get('get-profile',[AuthController::class,'getProfile']);
     Route::post('update-profile',[AuthController::class,'updateProfile']);
+
+    Route::post('upload-proof',[CookController::class,'uploadProof']);
 
 });

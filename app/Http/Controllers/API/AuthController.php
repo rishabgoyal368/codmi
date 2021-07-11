@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,16 +19,7 @@ class AuthController extends Controller
 {
 
     use CommonTrait;
-
-    protected function commonResponse($data)
-    {
-        $response['code'] = $data['code'];
-        $response['status'] = $data['status'];
-        $response['message'] = $data['message'];
-        $response['data'] = @$data['data'];
-        return $response;
-    }
-
+    
     public function user_register(Request $request)
     {
         $data = $request->all();
@@ -36,7 +27,8 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|max:50',
-            'login_type' => 'required|in:email,facebook,google'
+            'login_type' => 'required|in:email,facebook,google',
+            'type' => 'required|in:1,2'
         ]);
         if ($validator->fails()) {
             $data['code'] = 404;
@@ -47,7 +39,7 @@ class AuthController extends Controller
         }
         $data['password'] = Hash::make($data['password']);
         $data['status'] = User::PENDINGSTATUS;
-        $data['type'] = User::USERTYPE;
+        $data['type'] = $request->type == '1' ? User::USERTYPE : User::COOKTYPE;
         User::addEdit($data);
         $data['code'] = 200;
         $data['status'] = 'success';
@@ -182,4 +174,5 @@ class AuthController extends Controller
             return $this->commonResponse($data);
         }
     }
+
 }

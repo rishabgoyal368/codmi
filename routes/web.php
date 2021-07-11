@@ -2,10 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
-use App\Http\Controllers\Admin\Auth\DashboardController;
-use App\Http\Controllers\Admin\Auth\UserController;
-use App\Models\User;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,4 +34,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function () {
 	Route::post('change-request', [UserController::class, 'changeStatus']);
 
 	Route::get('/on-board-result/{id}', [UserController::class, 'onBoardResult']);
+
+	Route::match(['get', 'post'], '/manage-proof', [CookController::class, 'list']);
+
+
 });

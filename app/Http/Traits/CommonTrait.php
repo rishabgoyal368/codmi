@@ -4,6 +4,16 @@ namespace App\Http\Traits;
 
 trait CommonTrait
 {
+
+    public function commonResponse($data)
+    {
+        $response['code'] = $data['code'];
+        $response['status'] = $data['status'];
+        $response['message'] = $data['message'];
+        $response['data'] = @$data['data'];
+        return $response;
+    }
+
     public function onBoardingQuestion()
     {
         $data = array(
