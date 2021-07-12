@@ -14,12 +14,13 @@ use stdClass;
 use App\Http\Traits\CommonTrait;
 use App\Models\User;
 use App\Models\OnBoardSubmit;
+use App\Models\DeviceToken;
 
 class AuthController extends Controller
 {
 
     use CommonTrait;
-    
+
     public function user_register(Request $request)
     {
         $data = $request->all();
@@ -39,7 +40,7 @@ class AuthController extends Controller
         }
         $data['password'] = Hash::make($data['password']);
         $data['status'] = User::PENDINGSTATUS;
-        $data['type'] = $request->type == '1' ? User::USERTYPE : User::COOKTYPE;
+        $data['type'] = User::USERTYPE;
         User::addEdit($data);
         $data['code'] = 200;
         $data['status'] = 'success';
@@ -50,10 +51,12 @@ class AuthController extends Controller
 
     public function userLogin(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-        $validator = Validator::make($credentials, [
+        $input = $request->all();
+        $validator = Validator::make($input, [
             'email' => 'required|email',
-            'password' => 'required|string|min:6|max:50'
+            'password' => 'required|string|min:6|max:50',
+            'fcm_token' => 'required',
+            'device_type' => 'required|in:android,ios',
         ]);
         if ($validator->fails()) {
             $data['code'] = 404;
@@ -63,6 +66,7 @@ class AuthController extends Controller
             return $this->commonResponse($data);
         }
         try {
+            $credentials = $request->only('email', 'password');
             if (!$tkn = JWTAuth::attempt($credentials)) {
                 $data['code'] = 400;
                 $data['status'] = 'error';
@@ -70,6 +74,17 @@ class AuthController extends Controller
                 $data['data'] = new \stdClass();
                 return $this->commonResponse($data);
             }
+
+            $devicetoken = DeviceToken::where('fcm_token', $request->fcm_token)->first();
+            if (empty($devicetoken)) {
+                $devicetoken = new DeviceToken();
+            }
+            $devicetoken->fcm_token = $request->fcm_token;
+            $devicetoken->user_id = user::where('email', $request->email)->value('id');
+            $devicetoken->device_type = @$request->device_type;
+            $devicetoken->save();
+
+
             $token = new \stdClass();
             $token->token = $tkn;
             $data['code'] = 200;
@@ -174,5 +189,4 @@ class AuthController extends Controller
             return $this->commonResponse($data);
         }
     }
-
 }

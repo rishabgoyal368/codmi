@@ -16,7 +16,7 @@ class CookProfile extends Model
     protected $fillable = [
         'user_id', 'proof', 'proof_status'
     ];
-    
+
     /**
      * Get the user associated with the CookProfile
      *
@@ -24,6 +24,20 @@ class CookProfile extends Model
      */
     public function user()
     {
-        return $this->hasOne(User::class, 'foreign_key', 'local_key');
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function getCookStatus()
+    {
+        if ($this->proof_status == CookProfile::PROOFACTIVATE) {
+            return '<label class="badge badge-success">Activate</label>';
+        } else if ($this->proof_status == CookProfile::PROOFDEACTIVATE) {
+            return '<label class="badge badge-danger">Deactivate</label>';
+        }
+    }
+
+    public function getProofAttribute($value)
+    {
+        return env('APP_URL').CookProfile::PROOFPATH.'/'.$value;
     }
 }

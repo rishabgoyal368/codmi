@@ -7,8 +7,7 @@ $(document).ready(function() {
     $(document).on("click", ".changeStatus", function(e) {
         e.preventDefault();
         var url = $(this).attr('data-url');
-        var name = 'User';
-        // $(this).data("name")
+        var name = $(this).attr('data-page') ? $(this).attr('data-page') : 'User';
         var formData = {
             'id': $(this).attr('data-id'),
             'status': $(this).attr('data-status'),

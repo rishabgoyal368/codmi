@@ -20,6 +20,10 @@ input.error::placeholder {
     color: red !important;
 }
 
+.icon_green {
+    color: green !important;
+}
+
 .custom_icon {
     font-size: 16px !important;
 }

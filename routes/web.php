@@ -36,6 +36,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function () {
 	Route::get('/on-board-result/{id}', [UserController::class, 'onBoardResult']);
 
 	Route::match(['get', 'post'], '/manage-proof', [CookController::class, 'list']);
+	Route::post('change-proof-request', [CookController::class, 'changeStatus'])->name('changeProofRequest');
 
 
 });
