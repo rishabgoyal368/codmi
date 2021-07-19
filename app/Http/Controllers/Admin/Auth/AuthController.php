@@ -37,7 +37,7 @@ class AuthController extends Controller
                     $admin = Auth::guard('admin')->user()->name;
                     return redirect('admin/dashboard')->with('success', 'Welcome Back ' . ucfirst($admin));
                 } else {
-                    return redirect('admin/login')->with('error', "You have entered wrong email or password");
+                    return redirect()->back()->with('error', "You have entered wrong email or password");
                 }
             }
         }

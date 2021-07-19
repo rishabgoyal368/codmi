@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CookController;
+use App\Http\Controllers\Admin\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function () {
 
 	Route::match(['get', 'post'], '/manage-proof', [CookController::class, 'list']);
 	Route::post('change-proof-request', [CookController::class, 'changeStatus'])->name('changeProofRequest');
+
+	Route::match(['get', 'post'], '/manage-category', [CategoryController::class, 'list']);
+	Route::match(['get', 'post'], '/add-category', [CategoryController::class, 'add']);
 
 
 });

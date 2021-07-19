@@ -48,8 +48,6 @@
                                 <td>NO data found!</td>
                             </tr>
                             @endforelse
-
-
                     </table>
                 </div>
             </div>

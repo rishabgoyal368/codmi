@@ -30,7 +30,21 @@
                     <li class="nav-item"> <a class="nav-link" href="{{url('/admin/manage-proof')}}">Manage Proof</a></li>
                 </ul>
             </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#manage-category" aria-expanded="false" aria-controls="manage-category">
+                <span class="menu-title">Manage Category</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="manage-category">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="{{url('/admin/manage-category')}}">Category</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="{{url('/admin/add-category')}}">Add Category</a></li>
+                </ul>
+            </div>
 
         </li>
+
     </ul>
 </nav>
