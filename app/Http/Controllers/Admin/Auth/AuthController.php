@@ -35,7 +35,10 @@ class AuthController extends Controller
                 );
                 if (Auth::guard('admin')->attempt($credentials)) {
                     $admin = Auth::guard('admin')->user()->name;
-                    return redirect('admin/dashboard')->with('success', 'Welcome Back ' . ucfirst($admin));
+                    return redirect('admin/dashboard')->with(
+                        'success',
+                        'Welcome Back ' . ucfirst($admin)
+                    );
                 } else {
                     return redirect()->back()->with('error', "You have entered wrong email or password");
                 }
@@ -52,76 +55,33 @@ class AuthController extends Controller
         return redirect('admin')->with('success', 'You logged out successfully');
     }
 
-    public function forgot_password(Request $request)
+    public function register(Request $request)
     {
-
+        if ($request->isMethod('GET')) {
+            return view('admin.auth.register');
+        }
         if ($request->isMethod('post')) {
             $data = $request->all();
-
-            $admin_detail = Admin::select('*')->where('email', $data['email'])->first();
-            if (empty($admin_detail)) {
-                return redirect()->back()->with('error', 'This email does not exist');
+            $validator = Validator::make(
+                $data,
+                [
+                    'email' => 'required|email|unique:admins,email',
+                    'password' =>  'required',
+                    'role' =>  'required',
+                ]
+            );
+            if ($validator->fails()) {
+                return back()->withInput($request->all())->withErrors($validator->errors());
             } else {
-                $admin_id = $admin_detail->id;
-            }
-
-            $admin_set_password = Admin::find($admin_id);
-            $random_no          = rand(111111, 999999);
-            $security_code      = base64_encode(convert_uuencode($random_no));
-            $email              = $data['email'];
-            $name               = ucfirst($admin_detail->name);
-
-            $admin_set_password->security_code = $security_code;
-
-            $company_name = PROJECT_NAME;
-
-            if ($admin_set_password->save()) {
-                $set_password_url = url('/admin/set/password' . '/' . base64_encode(convert_uuencode($admin_id)) . '/' . $security_code);
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                    Mail::send('emails.forgot_password', ['name' => $name, 'set_password_url' => $set_password_url], function ($message) use ($email, $company_name) {
-                        $message->to($email, $company_name)->subject($company_name . ', Reset Password Mail');
-                    });
-                    return redirect()->back()->with('success', 'Reset password link has been sent to this email');
-                } else {
-                    return redirect()->back()->with('error', COMMON_ERROR);
-                }
-            } else {
-                return redirect('admin/login')->with('error', COMMON_ERROR);
+                Admin::create([
+                    'name' => $data['name'] ?? '',
+                    'email' => $data['email'],
+                    'password' => $data['password'] ? Hash::make($request['password']) : '',
+                    'profile_pic' => '',
+                    'role' => $data['role'],
+                ]);
+                return redirect('/')->with('success', "User Register successfully");
             }
         }
-        return view('backEnd.forgot_password');
-    }
-
-    public function set_password(Request $request, $admin_id, $security_code)
-    {
-
-        $admin_id = convert_uudecode(base64_decode($admin_id));
-
-        $admin_detail = Admin::select('id', 'security_code', 'email')->where('id', $admin_id)->first();
-        if (!empty($admin_detail)) {
-            $admin_security_code = $admin_detail->security_code;
-        } else {
-            return redirect()->back()->with('error', COMMON_ERROR);
-        }
-
-        if ($admin_security_code == $security_code) {
-            if ($request->isMethod('post')) {
-                $data = $request->all();
-                if ($data['password'] == $data['confirm_password']) {
-                    $admin = Admin::find($admin_id);
-                    $admin->password =   Hash::make($data['password']);
-                    if ($admin->save()) {
-                        return redirect('admin/login')->with('success', 'Password changed successfully');
-                    } else {
-                        return redirect('admin/login')->with('error', COMMON_ERROR);
-                    }
-                } else {
-                    return redirect()->back()->with('error', 'Password and Confirm password does not match, Please fill again');
-                }
-            }
-        } else {
-            return redirect('admin/forgot-password')->with('error', 'This link has been expired, Please send mail again');
-        }
-        return view('backEnd.set_password', ['admin_detail' => $admin_detail]);
     }
 }

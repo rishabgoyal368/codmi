@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDeviceTokwnTable extends Migration
+class CreateRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateDeviceTokwnTable extends Migration
      */
     public function up()
     {
-        Schema::create('device_token', function (Blueprint $table) {
-            $table->id();
-            $table->longText('fcm_token');
-            $table->string('device_type');
-            $table->string('user_id');
+        Schema::create('roles', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name'); 
+            $table->string('role_id'); 
+            $table->string('status'); 
+            $table->longText('permissions'); 
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateDeviceTokwnTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('device_token');
+        Schema::dropIfExists('roles');
     }
 }

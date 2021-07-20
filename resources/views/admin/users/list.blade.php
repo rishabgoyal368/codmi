@@ -18,34 +18,17 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Profile Pic</th>
                                 <th>Email</th>
-                                <th>User Type</th>
-                                <th>Login Type</th>
-                                <th>Status</th>
+                                <th>Roll</th>
                                 <th>Created</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($users as $user)
                             <tr>
-                                <td>{{$user->name}}</td>
-                                <td> <img src="{{$user->getProfileImage()}}" alt=""></td>
                                 <td>{{$user->email}}</td>
-                                <td><label class="{{$user->getUserType()[0]}}">{{$user->getUserType()[1 ]}}</label></td>
-                                <td><label class="{{$user->getLoginType()[0]}}">{{$user->getLoginType()[1 ]}}</label></td>
-                                <td><label class="{{$user->getStatus()[0]}}">{{$user->getStatus()[1 ]}}</label></td>
+                                <td>{{$user->getRole()}}</td>
                                 <td>{{date('d-M-y H:i:s',strtotime($user->created_at))}}</td>
-                                <td>
-                                    <a href="{{url('/admin/edit-user')}}/{{$user->id}}" title="Edit"><i class="mdi mdi-grease-pencil custom_icon"></i></a>
-                                    <a class="changeStatus" data-id="{{$user->id}}" data-url="{{url('/admin/change-request')}}" data-status="{{$user->status}}"><i class="mdi mdi mdi-delete custom_icon icon_red" title="Delete"></i></a>
-                                    @if($user->type == \App\Models\User::COOKTYPE)
-                                    <a href="{{url('/admin/on-board-result')}}/{{$user->id}}" target="_blank"><i class="mdi mdi mdi-database custom_icon" title="On board Result"></i></a>
-                                    @endif
-
-                                </td>
                             </tr>
                             @empty
                             <tr>
